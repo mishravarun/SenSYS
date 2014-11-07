@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android" >
+    <!-- Search Widget -->
+
+    
+    <!-- Location Found -->
+
+    <item android:id="@+id/btConnect"
+        android:icon="@drawable/ic_connect"
+        android:title="@string/action_settings"
+        android:showAsAction="ifRoom" />
+    <item android:id="@+id/action_start"
+          android:icon="@drawable/ic_start"
+          android:title="@string/action_start"
+          android:showAsAction="ifRoom" />
+    <item android:id="@+id/action_stop"
+        android:icon="@drawable/ic_stop"
+        android:title="@string/action_stop"
+        android:showAsAction="ifRoom" />
+    <!-- Refresh -->
+    <item android:id="@+id/action_refresh"
+          android:icon="@drawable/ic_action_refresh"
+          android:title="@string/action_refresh" 
+          android:showAsAction="ifRoom" />
+    <!-- Refresh -->
+
+    <item android:id="@+id/action_settings"
+        android:title="@string/action_settings"
+        android:orderInCategory="1"
+        android:showAsAction="never" />
+    <!-- Help -->
+    <item android:id="@+id/action_help"
+          android:icon="@drawable/ic_action_help"
+          android:title="@string/action_help"
+          android:showAsAction="never"/>
+
+
+</menu>

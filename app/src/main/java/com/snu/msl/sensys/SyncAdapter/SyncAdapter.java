@@ -96,6 +96,7 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
             StringBuilder res=new StringBuilder();
                 while (!cursor.isAfterLast()) {
                      String timestamp = cursor.getString(cursor.getColumnIndex("timestamp"));
+                    String firstTime = cursor.getString(cursor.getColumnIndex("firsttime"));
                     String gpsLatitude = cursor.getString(cursor.getColumnIndex("gpslatitude"));
                      String gpsLongitude = cursor.getString(cursor.getColumnIndex("gpslongitude"));
                      String sensordroneMAC = cursor.getString(cursor.getColumnIndex("sensordronemac"));
@@ -113,10 +114,12 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
 
                     String responseString ="";
                     HttpClient httpclient = new DefaultHttpClient();
-                    HttpPost httppost = new HttpPost("http://hms.dev.webapps.snu.edu.in/ITRAWebsite/upload/upload1.php");
+                    HttpPost httppost = new HttpPost("http://mobisense.webapps.snu.edu.in/ITRAWebsite/upload/sensordroneupload.php");
                     try {
                         List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>(2);
+                        nameValuePairs.add(new BasicNameValuePair("user", account.name));
                         nameValuePairs.add(new BasicNameValuePair("timestamp", timestamp));
+                        nameValuePairs.add(new BasicNameValuePair("firsttime", firstTime));
                         nameValuePairs.add(new BasicNameValuePair("gpslatitude", gpsLatitude));
                         nameValuePairs.add(new BasicNameValuePair("gpslongitude", gpsLongitude));
                         nameValuePairs.add(new BasicNameValuePair("sensordronemac", sensordroneMAC));

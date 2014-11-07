@@ -14,7 +14,7 @@ public class DroneApplication extends Application {
 
 	// Set some streaming rates, so we can switch back to a default rate when
 	// coming back from graphing.
-	public int defaultRate = 1000;
+	public int defaultRate = 5000;
 	public int streamingRate;
 
 	@Override

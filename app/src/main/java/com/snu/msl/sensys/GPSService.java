@@ -93,7 +93,6 @@ public class GPSService extends Service implements LocationListener, GpsStatus.L
     public void onProviderDisabled(String provider) {
         Log.d("Latitude","disable");
         GPS_STATUS="Location Not Available";
-
         stopSelf();
     }
     @Override

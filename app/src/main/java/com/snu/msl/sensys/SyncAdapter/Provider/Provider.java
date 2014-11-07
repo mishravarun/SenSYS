@@ -24,6 +24,7 @@ public class Provider extends ContentProvider {
     public static final Uri CONTENT_URI = Uri.parse(URL);
 
     public static final String timestamp = "timestamp";
+    public static final String firstTime = "firsttime";
     public static final String gpsLatitude = "gpslatitude";
     public static final String gpsLongitude = "gpslongitude";
     public static final String sensordroneMAC = "sensordronemac";
@@ -139,6 +140,7 @@ public class Provider extends ContentProvider {
     static final int DATABASE_VERSION = 1;
     static final String CREATE_DB_TABLE = " CREATE TABLE " + TABLE_NAME
             + " (timestamp TEXT NOT NULL, "
+            + " firsttime TEXT NOT NULL, "
             + " gpslatitude TEXT NOT NULL, "
             + " gpslongitude TEXT NOT NULL, "
             + " sensordronemac TEXT NOT NULL, "
