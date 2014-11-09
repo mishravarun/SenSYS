@@ -895,7 +895,7 @@ public class MyActivity extends Activity {
         if(gpsStatus)
         {
             if(GPSService.isGPSFix)
-            { refreshDisplay(new String[] {""+GPSService.mLastLocation.getLatitude(), ""+GPSService.mLastLocation.getLongitude(),""+GPSService.mLastLocation.getAltitude(),sensordroneTemperature, sensordroneHumidity,sensordronePressure,sensordroneIRTemperature,sensordroneIlluminance,sensordroneprecisionGas,sensordroneCapacitance,sensordroneOxidizingGas,sensordroneReducingGas,sensordroneExternalVoltage,sensordroneBatteryVoltage});
+            { refreshDisplay(new String[] {""+(float)GPSService.mLastLocation.getLatitude(), ""+(float)GPSService.mLastLocation.getLongitude(),""+(float)GPSService.mLastLocation.getAltitude(),sensordroneTemperature, sensordroneHumidity,sensordronePressure,sensordroneIRTemperature,sensordroneIlluminance,sensordroneprecisionGas,sensordroneCapacitance,sensordroneOxidizingGas,sensordroneReducingGas,sensordroneExternalVoltage,sensordroneBatteryVoltage});
 
                 timeStamp = s.format(new Date());
                 if(fTime==0)

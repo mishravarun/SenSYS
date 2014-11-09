@@ -73,45 +73,73 @@ public class SensorCard extends CardWithList  {
     {
         WeatherObject w1=(WeatherObject)mObjects.get(0);
         w1.temperature=""+values[0].toString();
+        w1.unit = " °";
+        ((WeatherObject) mObjects.get(0)).unit=w1.unit;
         ((WeatherObject) mObjects.get(0)).temperature=w1.temperature;
         w1=(WeatherObject)mObjects.get(1);
         w1.temperature=""+values[1].toString();
+        w1.unit = " °";
+        ((WeatherObject) mObjects.get(1)).unit=w1.unit;
         ((WeatherObject) mObjects.get(1)).temperature=w1.temperature;
         w1=(WeatherObject)mObjects.get(2);
         w1.temperature=""+values[2].toString();
+        w1.unit = " mts";
+        ((WeatherObject) mObjects.get(2)).unit=w1.unit;
         ((WeatherObject) mObjects.get(2)).temperature=w1.temperature;
         w1=(WeatherObject)mObjects.get(3);
         w1.temperature=""+values[3].toString();
+        w1.unit = " °C";
+        ((WeatherObject) mObjects.get(3)).unit=w1.unit;
         ((WeatherObject) mObjects.get(3)).temperature=w1.temperature;
         w1=(WeatherObject)mObjects.get(4);
-        w1.temperature=""+values[4].toString();
+        w1.temperature=""+values[4].toString() ;
+        w1.unit = " %";
+        ((WeatherObject) mObjects.get(4)).unit=w1.unit;
         ((WeatherObject) mObjects.get(4)).temperature=w1.temperature;
         w1=(WeatherObject)mObjects.get(5);
         w1.temperature=""+values[5].toString();
+        w1.unit = " hPa";
+        ((WeatherObject) mObjects.get(5)).unit=w1.unit;
         ((WeatherObject) mObjects.get(5)).temperature=w1.temperature;
         w1=(WeatherObject)mObjects.get(6);
-        w1.temperature=""+values[6].toString();
+        w1.temperature=""+values[6].toString() ;
+        w1.unit = " °C";
+        ((WeatherObject) mObjects.get(6)).unit=w1.unit;
         ((WeatherObject) mObjects.get(6)).temperature=w1.temperature;
         w1=(WeatherObject)mObjects.get(7);
         w1.temperature=""+values[7].toString();
+        w1.unit = " lx";
+        ((WeatherObject) mObjects.get(7)).unit=w1.unit;
         ((WeatherObject) mObjects.get(7)).temperature=w1.temperature;
         w1=(WeatherObject)mObjects.get(8);
         w1.temperature=""+values[8].toString();
+        w1.unit = " ppm";
+        ((WeatherObject) mObjects.get(8)).unit=w1.unit;
         ((WeatherObject) mObjects.get(8)).temperature=w1.temperature;
         w1=(WeatherObject)mObjects.get(9);
         w1.temperature=""+values[9].toString();
+        w1.unit = " fF";
+        ((WeatherObject) mObjects.get(9)).unit=w1.unit;
         ((WeatherObject) mObjects.get(9)).temperature=w1.temperature;
         w1=(WeatherObject)mObjects.get(10);
         w1.temperature=""+values[10].toString();
+        w1.unit = " ppm";
+        ((WeatherObject) mObjects.get(10)).unit=w1.unit;
         ((WeatherObject) mObjects.get(10)).temperature=w1.temperature;
         w1=(WeatherObject)mObjects.get(11);
         w1.temperature=""+values[11].toString();
+        w1.unit = " ppm";
+        ((WeatherObject) mObjects.get(11)).unit=w1.unit;
         ((WeatherObject) mObjects.get(11)).temperature=w1.temperature;
         w1=(WeatherObject)mObjects.get(12);
-        w1.temperature=""+values[12].toString();
+        w1.temperature=""+values[12].toString() ;
+        w1.unit = " V";
+        ((WeatherObject) mObjects.get(12)).unit=w1.unit;
         ((WeatherObject) mObjects.get(12)).temperature=w1.temperature;
         w1=(WeatherObject)mObjects.get(13);
         w1.temperature=""+values[13].toString();
+        w1.unit = " V";
+        ((WeatherObject) mObjects.get(13)).unit=w1.unit;
         ((WeatherObject) mObjects.get(13)).temperature=w1.temperature;
 
 
@@ -123,6 +151,7 @@ public class SensorCard extends CardWithList  {
         WeatherObject w1= new WeatherObject(this);
         w1.city ="Latitude";
         w1.temperature = "--";
+        w1.unit = " °";
         w1.setObjectId(w1.city); //It can be important to set ad id
         w1.setSwipeable(false);
 
@@ -131,6 +160,8 @@ public class SensorCard extends CardWithList  {
         WeatherObject w2= new WeatherObject(this);
         w2.city ="Longitude";
         w2.temperature = "--";
+        w2.unit = " °";
+
         w2.setObjectId(w2.city);
         w2.setSwipeable(false);
 
@@ -139,6 +170,7 @@ public class SensorCard extends CardWithList  {
         WeatherObject w3= new WeatherObject(this);
         w3.city ="Altitude";
         w3.temperature = "--";
+        w3.unit = " mts";
         w3.setObjectId(w3.city);
         w3.setSwipeable(false);
         mObjects.add(w3);
@@ -148,6 +180,7 @@ public class SensorCard extends CardWithList  {
              w3= new WeatherObject(this);
             w3.city ="Temperature";
             w3.temperature = "--";
+            w3.unit = " °C";
             w3.setObjectId(w3.city);
             w3.setSwipeable(false);
             mObjects.add(w3);
@@ -155,6 +188,7 @@ public class SensorCard extends CardWithList  {
             w3= new WeatherObject(this);
             w3.city ="Humidity";
             w3.temperature = "--";
+            w3.unit = "%";
             w3.setObjectId(w3.city);
             w3.setSwipeable(false);
             mObjects.add(w3);
@@ -162,6 +196,7 @@ public class SensorCard extends CardWithList  {
             w3= new WeatherObject(this);
             w3.city ="Pressure";
             w3.temperature = "--";
+            w3.unit = " hPa";
             w3.setObjectId(w3.city);
             w3.setSwipeable(false);
             mObjects.add(w3);
@@ -169,6 +204,7 @@ public class SensorCard extends CardWithList  {
             w3= new WeatherObject(this);
             w3.city ="Object Temperature";
             w3.temperature = "--";
+            w3.unit = " °C";
             w3.setObjectId(w3.city);
             w3.setSwipeable(false);
             mObjects.add(w3);
@@ -176,6 +212,7 @@ public class SensorCard extends CardWithList  {
             w3= new WeatherObject(this);
             w3.city ="Light";
             w3.temperature = "--";
+            w3.unit = " lx";
             w3.setObjectId(w3.city);
             w3.setSwipeable(false);
             mObjects.add(w3);
@@ -183,6 +220,7 @@ public class SensorCard extends CardWithList  {
             w3= new WeatherObject(this);
             w3.city ="Precision Gas";
             w3.temperature = "--";
+            w3.unit = " ppm";
             w3.setObjectId(w3.city);
             w3.setSwipeable(false);
             mObjects.add(w3);
@@ -190,6 +228,7 @@ public class SensorCard extends CardWithList  {
         w3= new WeatherObject(this);
         w3.city ="Proximity Capacitance";
         w3.temperature = "--";
+        w3.unit = " fF";
         w3.setObjectId(w3.city);
         w3.setSwipeable(false);
         mObjects.add(w3);
@@ -197,6 +236,7 @@ public class SensorCard extends CardWithList  {
         w3= new WeatherObject(this);
         w3.city ="Oxidizing Gas";
         w3.temperature = "--";
+        w3.unit = " ppm";
         w3.setObjectId(w3.city);
         w3.setSwipeable(false);
         mObjects.add(w3);
@@ -204,6 +244,7 @@ public class SensorCard extends CardWithList  {
         w3= new WeatherObject(this);
         w3.city ="Reducing Gas";
         w3.temperature = "--";
+        w3.unit = " ppm";
         w3.setObjectId(w3.city);
         w3.setSwipeable(false);
         mObjects.add(w3);
@@ -211,6 +252,7 @@ public class SensorCard extends CardWithList  {
         w3= new WeatherObject(this);
         w3.city ="External Voltage";
         w3.temperature = "--";
+        w3.unit = " V";
         w3.setObjectId(w3.city);
         w3.setSwipeable(false);
         mObjects.add(w3);
@@ -218,6 +260,7 @@ public class SensorCard extends CardWithList  {
         w3= new WeatherObject(this);
         w3.city ="Battery Voltage";
         w3.temperature = "--";
+        w3.unit = " V";
         w3.setObjectId(w3.city);
         w3.setSwipeable(false);
         mObjects.add(w3);
@@ -231,12 +274,12 @@ public class SensorCard extends CardWithList  {
         //Setup the ui elements inside the item
         TextView city = (TextView) convertView.findViewById(R.id.carddemo_weather_city);
         TextView temperature = (TextView) convertView.findViewById(R.id.carddemo_weather_temperature);
-
+        TextView unit = (TextView) convertView.findViewById(R.id.card_unit);
         //Retrieve the values from the object
         WeatherObject weatherObject= (WeatherObject)object;
         city.setText(weatherObject.city);
-        temperature.setText(weatherObject.temperature + weatherObject.temperatureUnit);
-
+        temperature.setText(weatherObject.temperature);
+        unit.setText(weatherObject.unit);
         return  convertView;
     }
 
@@ -257,7 +300,7 @@ public class SensorCard extends CardWithList  {
         public String city;
         public int weatherIcon;
         public String temperature="";
-        public String temperatureUnit="";
+        public String unit="";
 
         public WeatherObject(Card parentCard){
             super(parentCard);
@@ -270,13 +313,13 @@ public class SensorCard extends CardWithList  {
                 @Override
                 public void onItemClick(LinearListView parent, View view, int position, ListObject object) {
                     WeatherObject w = (WeatherObject)object;
-                    createDialog(city,w.temperature);
+                    createDialog(city,w.temperature, w.unit);
                 }
             });
 
 
         }
-        public  void createDialog(final String header, String s)
+        public  void createDialog(final String header, String s, String units)
         {
             final Dialog dialog = new Dialog(getContext());
 
@@ -284,7 +327,7 @@ public class SensorCard extends CardWithList  {
             dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
             dialog.setContentView(R.layout.dialog);
             final TextView col = (TextView) dialog.findViewById(R.id.color);
-            col.setText("  "+header);
+            col.setText("  "+header+" (" + units + ")");
 
             final TextView txt = (TextView) dialog.findViewById(R.id.txt);
             txt.setText(s);
