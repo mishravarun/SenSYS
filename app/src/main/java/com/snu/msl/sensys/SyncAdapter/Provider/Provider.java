@@ -27,6 +27,7 @@ public class Provider extends ContentProvider {
     public static final String firstTime = "firsttime";
     public static final String gpsLatitude = "gpslatitude";
     public static final String gpsLongitude = "gpslongitude";
+    public static final String gpsAltitude = "gpsaltitude";
     public static final String sensordroneMAC = "sensordronemac";
     public static final String sensordroneTemperature = "sensordronetemperature";
     public static final String sensordroneHumidity = "sensordronehumidity";
@@ -39,6 +40,7 @@ public class Provider extends ContentProvider {
     public static final String sensordroneBatteryVoltage = "sensordronebatteryvoltage";
     public static final String sensordroneOxidizingGas = "sensordroneoxidizinggas";
     public static final String sensordroneReducingGas = "sensordronereducinggas";
+    public static final String sensordroneCO2 = "sensordroneco2";
 
 
     public static final int uriCode = 1;
@@ -143,6 +145,7 @@ public class Provider extends ContentProvider {
             + " firsttime TEXT NOT NULL, "
             + " gpslatitude TEXT NOT NULL, "
             + " gpslongitude TEXT NOT NULL, "
+            + " gpsaltitude TEXT NOT NULL, "
             + " sensordronemac TEXT NOT NULL, "
             + " sensordronetemperature TEXT NOT NULL, "
             + " sensordronehumidity TEXT NOT NULL, "
@@ -150,6 +153,7 @@ public class Provider extends ContentProvider {
             + " sensordroneirtemperature TEXT NOT NULL, "
             + " sensordroneilluminance TEXT NOT NULL, "
             + " sensordroneprecisiongas TEXT NOT NULL, "
+            + " sensordroneco2 TEXT NOT NULL, "
             + " sensordroneoxidizinggas TEXT NOT NULL, "
             + " sensordronereducinggas TEXT NOT NULL, "
             + " sensordronecapacitance TEXT NOT NULL, "

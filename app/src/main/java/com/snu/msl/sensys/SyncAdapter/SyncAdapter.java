@@ -111,6 +111,9 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
                      String sensordroneBatteryVoltage = cursor.getString(cursor.getColumnIndex("sensordronebatteryvoltage"));
                     String sensordroneOxidizingGas = cursor.getString(cursor.getColumnIndex("sensordroneoxidizinggas"));
                     String sensordroneReducingGas = cursor.getString(cursor.getColumnIndex("sensordronereducinggas"));
+                    String gpsAltitude = cursor.getString(cursor.getColumnIndex("gpsaltitude"));
+                    String sensordroneCO2 = cursor.getString(cursor.getColumnIndex("sensordroneco2"));
+
 
                     String responseString ="";
                     HttpClient httpclient = new DefaultHttpClient();
@@ -134,6 +137,9 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
                         nameValuePairs.add(new BasicNameValuePair("sensordronebatteryvoltage", sensordroneBatteryVoltage));
                         nameValuePairs.add(new BasicNameValuePair("sensordroneoxidizinggas", sensordroneOxidizingGas));
                         nameValuePairs.add(new BasicNameValuePair("sensordronereducinggas", sensordroneReducingGas));
+                        nameValuePairs.add(new BasicNameValuePair("sensordroneco2", sensordroneCO2));
+                        nameValuePairs.add(new BasicNameValuePair("gpsaltitude", gpsAltitude));
+
                         Log.d("TAG",sensordroneOxidizingGas+", " + sensordroneReducingGas + ", " + sensordroneTemperature);
 
                         httppost.setEntity(new UrlEncodedFormEntity(nameValuePairs));

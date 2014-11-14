@@ -4,6 +4,7 @@ import android.accounts.Account;
 import android.accounts.AccountManager;
 import android.app.ActionBar;
 import android.app.Activity;
+import android.app.ProgressDialog;
 import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.content.Context;
@@ -36,6 +37,7 @@ import com.sensorcon.sensordrone.android.tools.DroneStreamer;
 import com.snu.msl.sensys.Cards.SensorCard;
 import com.snu.msl.sensys.SyncAdapter.Provider.Provider;
 
+import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
@@ -48,6 +50,7 @@ public class MyActivity extends Activity {
     public static SensorCard card;
     public static int fTime=0;
     public static String firstTime="";
+    public static ProgressDialog progressDialog;
     /*
      * We put our Drone object in a class that extends Application so it can be
      * accessed in multiple activities.
@@ -72,7 +75,8 @@ public class MyActivity extends Activity {
             "Humidity", "Pressure", "Object Temperature (IR)",
             "Illuminance (calculated)", "Precision Gas (CO equivalent)",
             "Proximity Capacitance", "External Voltage (0-3V)",
-            "Altitude (calculated)", "Oxidizing Gas", "Reducing Gas" };
+            "Altitude (calculated)", "Oxidizing Gas", "Reducing Gas"};
+
 
     // Figure out how many sensors we have based on the length of our labels
     private int numberOfSensors = SENSOR_NAMES.length;
@@ -90,6 +94,7 @@ public class MyActivity extends Activity {
     String sensordroneBatteryVoltage="-";
     String sensordroneOxidizingGas="-";
     String sensordroneReducingGas="-";
+    String sensordroneCO2="-";
 
     // GUI Stuff
     private ImageButton btnStartLogging;
@@ -387,6 +392,8 @@ public class MyActivity extends Activity {
 
                    streamerArray[5].streamHandler.postDelayed(streamerArray[5],
                         droneApp.streamingRate);
+                droneApp.myDrone.uartWrite("Z\r\n".getBytes());
+                droneApp.myDrone.uartRead();
                     updateDatabase();
             }
 
@@ -435,6 +442,30 @@ public class MyActivity extends Activity {
 
             @Override
             public void uartRead(DroneEventObject arg0) {
+
+                String result="-1";
+                try {
+                    int avail = droneApp.myDrone.uartInputStream.available();
+                    boolean needData = true;
+                    for (int i=0; i < avail; i++) {
+
+                        if ((byte)droneApp.myDrone.uartInputStream.read() == 0x5a && i < avail-7 && needData) {
+                            droneApp.myDrone.uartInputStream.read();
+                            byte[] value = new byte[5];
+                            droneApp.myDrone.uartInputStream.read(value);
+                            result = new String(value);
+                            i +=6;
+                            needData = false;
+                        }
+                    }
+                } catch (IOException e1) {
+
+                }
+                Long tempCO2 = Long.parseLong(result);
+                if(tempCO2==-1)
+                    sensordroneCO2 ="-";
+                else
+                    sensordroneCO2 = "" + tempCO2;
 
             }
 
@@ -541,8 +572,12 @@ public class MyActivity extends Activity {
                 if (lowbatNotify && droneApp.myDrone.batteryVoltage_Volts < 3.1) {
                     lowbatNotify = false; // Set true again in connectEvent
                     myBlinker.stop();
+                    isSampling=false;
+                    droneApp.myDrone.uartWrite("K 0\r\n".getBytes());
+
                     doOnDisconnect(); // run our disconnect routine
                     // Notify the user
+                    quickMessage("Low Battery: Disconnecting..");
                     tvUpdate(tvStatus, "Low Battery: Disconnected!");
                     AlertInfo.lowBattery(MyActivity.this);
                 }
@@ -654,14 +689,20 @@ public class MyActivity extends Activity {
                 break;
             case R.id.action_start:
                 // location found
+                progressDialog = new ProgressDialog(getApplicationContext());
+                progressDialog.setMessage("Initializing");
                 start();
+
                 return true;
             case R.id.action_stop:
                 stop();
                 return true;
             case R.id.action_refresh:
-                // help action
-                //
+                if(isSampling)
+                    quickMessage("Cannot refresh while Sampling");
+                else
+                    refreshDisplay(new String[] {"--", "--.","--","--", "--.","--","--", "--.","--","--", "--.","--","--", "--.","--"});
+
                 return true;
 
             default:
@@ -669,6 +710,7 @@ public class MyActivity extends Activity {
         }
         return true;
     }
+
     // Measure the battery at the default rate (once a second)
     public void start(){
         if (droneApp.myDrone.isConnected) {
@@ -676,7 +718,7 @@ public class MyActivity extends Activity {
                 droneApp.myDrone.measureBatteryVoltage();
                 // droneApp.myDrone.measurePrecisionGas();
                 isSampling = true;
-
+                droneApp.myDrone.uartWrite("K 1\r\n".getBytes());
                 bvStreamer.start();
                 for (int i = 0; i < numberOfSensors; i++) {
                     streamerArray[i].enable();
@@ -689,6 +731,8 @@ public class MyActivity extends Activity {
                     Toast.makeText(getApplicationContext(), GPSService.GPS_STATUS, Toast.LENGTH_SHORT).show();
                 }
                 bvStreamer.start();
+                droneApp.myDrone.enableTemperature();
+
                 for (int i = 0; i < numberOfSensors; i++) {
                     streamerArray[i].enable();
                     // Enable the sensor
@@ -697,7 +741,7 @@ public class MyActivity extends Activity {
 
                 }
                 tvUpdate(tvSampling,"Logging Data");
-                quickMessage("Started Logging");
+
             } else {
                 quickMessage("Already Logging");
             }
@@ -713,6 +757,8 @@ public class MyActivity extends Activity {
         if(gpsStatus)
             stopService(new Intent(getApplicationContext(), GPSService.class));
         bvStreamer.stop();
+        fTime=0;
+        firstTime="";
         disconnectSensorDrone();
     }
     public class TableObserver extends ContentObserver {
@@ -862,11 +908,12 @@ public class MyActivity extends Activity {
     }
     public void updateDatabase() {
         if(!gpsStatus) {
-            refreshDisplay(new String[] {"n.a.", "n.a.","n.a.",sensordroneTemperature, sensordroneHumidity,sensordronePressure,sensordroneIRTemperature,sensordroneIlluminance,sensordroneprecisionGas,sensordroneCapacitance,sensordroneOxidizingGas,sensordroneReducingGas,sensordroneExternalVoltage,sensordroneBatteryVoltage});
+            refreshDisplay(new String[] {"n.a.", "n.a.","n.a.",sensordroneTemperature, sensordroneHumidity,sensordronePressure,sensordroneIRTemperature,sensordroneIlluminance,sensordroneprecisionGas,sensordroneCO2,sensordroneCapacitance,sensordroneOxidizingGas,sensordroneReducingGas,sensordroneExternalVoltage,sensordroneBatteryVoltage});
 
             timeStamp = s.format(new Date());
             if(fTime==0)
             {
+                progressDialog.dismiss();
                 firstTime=timeStamp;
                 fTime=1;
             }
@@ -885,9 +932,10 @@ public class MyActivity extends Activity {
             values.put(Provider.sensordroneTemperature, sensordroneTemperature);
             values.put(Provider.sensordroneOxidizingGas,sensordroneOxidizingGas);
             values.put(Provider.sensordroneReducingGas,sensordroneReducingGas);
-
+            values.put(Provider.sensordroneCO2,sensordroneCO2);
             values.put(Provider.gpsLatitude, "n.a.");
             values.put(Provider.gpsLongitude, "n.a.");
+            values.put(Provider.gpsAltitude, "n.a.");
 
 
             Uri uri = getContentResolver().insert(com.snu.msl.sensys.SyncAdapter.Provider.Provider.CONTENT_URI, values);
@@ -895,7 +943,7 @@ public class MyActivity extends Activity {
         if(gpsStatus)
         {
             if(GPSService.isGPSFix)
-            { refreshDisplay(new String[] {""+(float)GPSService.mLastLocation.getLatitude(), ""+(float)GPSService.mLastLocation.getLongitude(),""+(float)GPSService.mLastLocation.getAltitude(),sensordroneTemperature, sensordroneHumidity,sensordronePressure,sensordroneIRTemperature,sensordroneIlluminance,sensordroneprecisionGas,sensordroneCapacitance,sensordroneOxidizingGas,sensordroneReducingGas,sensordroneExternalVoltage,sensordroneBatteryVoltage});
+            { refreshDisplay(new String[] {""+(float)GPSService.mLastLocation.getLatitude(), ""+(float)GPSService.mLastLocation.getLongitude(),""+(float)GPSService.mLastLocation.getAltitude(),sensordroneTemperature, sensordroneHumidity,sensordronePressure,sensordroneIRTemperature,sensordroneIlluminance,sensordroneprecisionGas,sensordroneCO2,sensordroneCapacitance,sensordroneOxidizingGas,sensordroneReducingGas,sensordroneExternalVoltage,sensordroneBatteryVoltage});
 
                 timeStamp = s.format(new Date());
                 if(fTime==0)
@@ -918,8 +966,10 @@ public class MyActivity extends Activity {
                 values.put(Provider.sensordroneTemperature, sensordroneTemperature);
                 values.put(Provider.sensordroneOxidizingGas,sensordroneOxidizingGas);
                 values.put(Provider.sensordroneReducingGas,sensordroneReducingGas);
+                values.put(Provider.sensordroneCO2,sensordroneCO2);
                 values.put(Provider.gpsLatitude, ""+GPSService.mLastLocation.getLatitude());
                 values.put(Provider.gpsLongitude, ""+GPSService.mLastLocation.getLongitude());
+                values.put(Provider.gpsAltitude, ""+GPSService.mLastLocation.getAltitude());
 
 
                 Uri uri = getContentResolver().insert(com.snu.msl.sensys.SyncAdapter.Provider.Provider.CONTENT_URI, values);

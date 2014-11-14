@@ -118,12 +118,12 @@ public class SensorCard extends CardWithList  {
         ((WeatherObject) mObjects.get(8)).temperature=w1.temperature;
         w1=(WeatherObject)mObjects.get(9);
         w1.temperature=""+values[9].toString();
-        w1.unit = " fF";
+        w1.unit = " ppm";
         ((WeatherObject) mObjects.get(9)).unit=w1.unit;
         ((WeatherObject) mObjects.get(9)).temperature=w1.temperature;
         w1=(WeatherObject)mObjects.get(10);
         w1.temperature=""+values[10].toString();
-        w1.unit = " ppm";
+        w1.unit = " fF";
         ((WeatherObject) mObjects.get(10)).unit=w1.unit;
         ((WeatherObject) mObjects.get(10)).temperature=w1.temperature;
         w1=(WeatherObject)mObjects.get(11);
@@ -133,7 +133,7 @@ public class SensorCard extends CardWithList  {
         ((WeatherObject) mObjects.get(11)).temperature=w1.temperature;
         w1=(WeatherObject)mObjects.get(12);
         w1.temperature=""+values[12].toString() ;
-        w1.unit = " V";
+        w1.unit = " ppm";
         ((WeatherObject) mObjects.get(12)).unit=w1.unit;
         ((WeatherObject) mObjects.get(12)).temperature=w1.temperature;
         w1=(WeatherObject)mObjects.get(13);
@@ -141,6 +141,11 @@ public class SensorCard extends CardWithList  {
         w1.unit = " V";
         ((WeatherObject) mObjects.get(13)).unit=w1.unit;
         ((WeatherObject) mObjects.get(13)).temperature=w1.temperature;
+        w1=(WeatherObject)mObjects.get(14);
+        w1.temperature=""+values[14].toString();
+        w1.unit = " V";
+        ((WeatherObject) mObjects.get(14)).unit=w1.unit;
+        ((WeatherObject) mObjects.get(14)).temperature=w1.temperature;
 
 
 
@@ -224,6 +229,14 @@ public class SensorCard extends CardWithList  {
             w3.setObjectId(w3.city);
             w3.setSwipeable(false);
             mObjects.add(w3);
+
+        w3= new WeatherObject(this);
+        w3.city ="CO2 Gas";
+        w3.temperature = "--";
+        w3.unit = " ppm";
+        w3.setObjectId(w3.city);
+        w3.setSwipeable(false);
+        mObjects.add(w3);
 
         w3= new WeatherObject(this);
         w3.city ="Proximity Capacitance";
