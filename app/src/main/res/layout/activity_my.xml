@@ -31,6 +31,13 @@
 
 
 
+
+            <EditText
+                android:layout_width="166dp"
+                android:layout_height="wrap_content"
+                android:id="@+id/indoorLocation"
+                android:layout_gravity="center_horizontal" />
+
             <it.gmariotti.cardslib.library.view.CardView
                 android:id="@+id/carddemo_weathercard"
                 android:layout_width="match_parent"

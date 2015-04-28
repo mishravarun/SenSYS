@@ -16,6 +16,7 @@ import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
 import android.os.Handler;
 import android.os.Looper;
 import android.preference.PreferenceManager;
@@ -23,6 +24,7 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.widget.CompoundButton;
+import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.Switch;
 import android.widget.TextView;
@@ -37,6 +39,8 @@ import com.sensorcon.sensordrone.android.tools.DroneStreamer;
 import com.snu.msl.sensys.Cards.SensorCard;
 import com.snu.msl.sensys.SyncAdapter.Provider.Provider;
 
+import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -51,6 +55,8 @@ public class MyActivity extends Activity {
     public static int fTime=0;
     public static String firstTime="";
     public static ProgressDialog progressDialog;
+    public static EditText indoorLocation;
+    public static String indoors[];
     /*
      * We put our Drone object in a class that extends Application so it can be
      * accessed in multiple activities.
@@ -124,13 +130,16 @@ public class MyActivity extends Activity {
     // The account name
     public static  String ACCOUNT = "";
     // Instance fields
-    private boolean gpsStatus = false;
+    private boolean gpsStatus = true;
     private boolean isSampling = false;
     Account mAccount;
     Uri mUri;
     // A content resolver for accessing the provider
     ContentResolver mResolver;
     public static Handler UIHandler;
+    boolean newFile = false;
+    FileWriter writer;
+    boolean firstLog=true;
 
     static
     {
@@ -143,6 +152,31 @@ public class MyActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_my);
+        File root = Environment.getExternalStorageDirectory();
+        File dir = new File(root,"sensordrone data");
+        File csvFile  = new File(dir,"sensordrone.csv");
+
+        if(!dir.exists()){
+            try{
+                if(dir.mkdir()) {
+
+                } else {
+                    Toast.makeText(getApplicationContext(), "Directory Not Created", Toast.LENGTH_LONG).show();
+                }
+            }catch(Exception e){
+                e.printStackTrace();
+            }
+            newFile = true;
+
+        }
+        try {
+             writer = new FileWriter(csvFile,true);
+
+        } catch (IOException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
         // Get out Application so we have access to our Drone
         ActionBar ab = getActionBar();
@@ -211,9 +245,10 @@ public class MyActivity extends Activity {
             }
         };
         gpsSwitch = (Switch) findViewById(R.id.gpsSwitch);
-
+        indoorLocation = (EditText)findViewById(R.id.indoorLocation);
         //set the switch to ON
-        gpsSwitch.setChecked(false);
+        gpsSwitch.setChecked(true);
+        indoorLocation.setEnabled(false);
         //attach a listener to check for changes in state
         gpsSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
 
@@ -226,8 +261,12 @@ public class MyActivity extends Activity {
                 else {
                     if (isChecked) {
                         gpsStatus=true;
+                        indoorLocation.setEnabled(false);
+
                     } else {
                         gpsStatus=false;
+                        indoorLocation.setEnabled(true);
+
                     }
                 }
 
@@ -691,7 +730,20 @@ public class MyActivity extends Activity {
                 // location found
                 progressDialog = new ProgressDialog(getApplicationContext());
                 progressDialog.setMessage("Initializing");
-                start();
+                if((indoorLocation.isEnabled()&&indoorLocation.getText().toString().contains(","))) {
+                    indoors = indoorLocation.getText().toString().split(",");
+                    if (indoors.length == 3 ) {
+                        quickMessage("Starting...");
+                        start();
+                    }else{
+                        quickMessage("Indoor Format Wrong");
+                    }
+                }
+                else if(!indoorLocation.isEnabled())
+                    start();
+                else
+               quickMessage("Indoor Location Missing");
+
 
                 return true;
             case R.id.action_stop:
@@ -713,43 +765,43 @@ public class MyActivity extends Activity {
 
     // Measure the battery at the default rate (once a second)
     public void start(){
-        if (droneApp.myDrone.isConnected) {
-            if (!isSampling) {
-                droneApp.myDrone.measureBatteryVoltage();
-                // droneApp.myDrone.measurePrecisionGas();
-                isSampling = true;
-                droneApp.myDrone.uartWrite("K 1\r\n".getBytes());
-                bvStreamer.start();
-                for (int i = 0; i < numberOfSensors; i++) {
-                    streamerArray[i].enable();
-                    // Enable the sensor
-                    droneApp.myDrone
-                            .quickEnable(qsSensors[i]);
-                }
-                if (gpsStatus) {
-                    startService(new Intent(getApplicationContext(), GPSService.class));
-                    Toast.makeText(getApplicationContext(), GPSService.GPS_STATUS, Toast.LENGTH_SHORT).show();
-                }
-                bvStreamer.start();
-                droneApp.myDrone.enableTemperature();
 
-                for (int i = 0; i < numberOfSensors; i++) {
-                    streamerArray[i].enable();
-                    // Enable the sensor
-                    droneApp.myDrone
-                            .quickEnable(qsSensors[i]);
+                if (droneApp.myDrone.isConnected) {
+                    if (!isSampling) {
+                        droneApp.myDrone.measureBatteryVoltage();
+                        // droneApp.myDrone.measurePrecisionGas();
+                        isSampling = true;
+                        droneApp.myDrone.uartWrite("K 1\r\n".getBytes());
+                        bvStreamer.start();
+                        for (int i = 0; i < numberOfSensors; i++) {
+                            streamerArray[i].enable();
+                            // Enable the sensor
+                            droneApp.myDrone
+                                    .quickEnable(qsSensors[i]);
+                        }
+                        if (gpsStatus) {
+                            startService(new Intent(getApplicationContext(), GPSService.class));
+                            Toast.makeText(getApplicationContext(), GPSService.GPS_STATUS, Toast.LENGTH_SHORT).show();
+                        }
+                        bvStreamer.start();
+                        droneApp.myDrone.enableTemperature();
 
+                        for (int i = 0; i < numberOfSensors; i++) {
+                            streamerArray[i].enable();
+                            // Enable the sensor
+                            droneApp.myDrone
+                                    .quickEnable(qsSensors[i]);
+
+                        }
+                        tvUpdate(tvSampling, "Logging Data");
+
+                    } else {
+                        quickMessage("Already Logging");
+                    }
+                } else {
+                    quickMessage("SensorDrone not connected. Please connect and try again.");
                 }
-                tvUpdate(tvSampling,"Logging Data");
 
-            } else {
-                quickMessage("Already Logging");
-            }
-        }
-        else
-        {
-            quickMessage("SensorDrone not connected. Please connect and try again.");
-        }
     }
     public void stop()
     {
@@ -846,6 +898,7 @@ public class MyActivity extends Activity {
             // Stop taking measurements
 
             // Run our routine of things to do on disconnect
+            isSampling=false;
             for(int i=0;i<numberOfSensors;i++) {
                 streamerArray[i].disable();
 
@@ -907,6 +960,12 @@ public class MyActivity extends Activity {
         });
     }
     public void updateDatabase() {
+        if(firstLog==true) {
+            isSampling = true;
+            quickMessage("Started Logging");
+            firstLog=false;
+        }
+        String lat="",lon="",alt="";
         if(!gpsStatus) {
             refreshDisplay(new String[] {"n.a.", "n.a.","n.a.",sensordroneTemperature, sensordroneHumidity,sensordronePressure,sensordroneIRTemperature,sensordroneIlluminance,sensordroneprecisionGas,sensordroneCO2,sensordroneCapacitance,sensordroneOxidizingGas,sensordroneReducingGas,sensordroneExternalVoltage,sensordroneBatteryVoltage});
 
@@ -933,11 +992,12 @@ public class MyActivity extends Activity {
             values.put(Provider.sensordroneOxidizingGas,sensordroneOxidizingGas);
             values.put(Provider.sensordroneReducingGas,sensordroneReducingGas);
             values.put(Provider.sensordroneCO2,sensordroneCO2);
-            values.put(Provider.gpsLatitude, "n.a.");
-            values.put(Provider.gpsLongitude, "n.a.");
-            values.put(Provider.gpsAltitude, "n.a.");
-
-
+            values.put(Provider.gpsLatitude, indoors[0]);
+            values.put(Provider.gpsLongitude, indoors[1]);
+            values.put(Provider.gpsAltitude, indoors[2]);
+            lat=indoors[0];
+            lon= indoors[1];
+            alt=indoors[2];
             Uri uri = getContentResolver().insert(com.snu.msl.sensys.SyncAdapter.Provider.Provider.CONTENT_URI, values);
         }
         if(gpsStatus)
@@ -970,11 +1030,35 @@ public class MyActivity extends Activity {
                 values.put(Provider.gpsLatitude, ""+GPSService.mLastLocation.getLatitude());
                 values.put(Provider.gpsLongitude, ""+GPSService.mLastLocation.getLongitude());
                 values.put(Provider.gpsAltitude, ""+GPSService.mLastLocation.getAltitude());
-
+                lat=""+GPSService.mLastLocation.getLatitude();
+                lon=""+GPSService.mLastLocation.getLongitude();
+                alt=""+GPSService.mLastLocation.getAltitude();
 
                 Uri uri = getContentResolver().insert(com.snu.msl.sensys.SyncAdapter.Provider.Provider.CONTENT_URI, values);
             }
         }
+        try {
+
+            if (newFile)
+            {
+                String line = String.format("%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s\n", "Time","Lat","Lon","Alt","MAC","SD Temp","SD Pressure","SD Humidity","SD IR Temperature","SD Illuminance","SD Precision Gas","SD Capacitance","SD External Voltage","Battery Voltage","SD Oxidizing Gas","SD Reducing Gas","SD CO2");
+                writer.write(line);
+                newFile=false;
+            }
+
+            String line = String.format("%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s\n", timeStamp, lat,lon,alt,sensordroneMAC,sensordroneTemperature,sensordronePressure,sensordroneHumidity,sensordroneIRTemperature,sensordroneIlluminance,sensordroneprecisionGas,sensordroneCapacitance,sensordroneExternalVoltage,sensordroneBatteryVoltage,sensordroneOxidizingGas,sensordroneReducingGas,sensordroneCO2);
+            writer.write(line);
+        }catch (IOException e) {
+            e.printStackTrace();
         }
+        try {
+            writer.flush();
+
+        } catch (IOException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+
+    }
 
 }
